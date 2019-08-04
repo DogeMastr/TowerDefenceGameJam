@@ -17,6 +17,7 @@ class tower{
 	PImage repeater;
 	PImage occultist;
 
+	PImage menu;
 
 	tower(float x, float y){
 		pos = new PVector();
@@ -26,6 +27,8 @@ class tower{
 		mage = loadImage("data/towers/MageTower.png");
 		repeater = loadImage("data/towers/RepeaterTower.png");
 		occultist = loadImage("data/towers/OccultistTower.png");
+
+		menu = loadImage("data/menu.png");
 
 		archer.resize(50,50);
 		mage.resize(50,50);
@@ -47,6 +50,7 @@ class tower{
 		display();
 		drag();
 		drawMenu();
+		attack();
 	}
 	void display(){
 		fill(255);
@@ -68,10 +72,7 @@ class tower{
 
 	void drawMenu(){
 		if(dist(mouseX,mouseY,pos.x,pos.y) < radius && mousePressed && mouseButton == RIGHT || mOpen){
-			fill(255);
-			ellipse(pos.x,pos.y,radius*5,radius*5);
-			fill(74);
-			ellipse(pos.x,pos.y,radius*4,radius*4);
+			image(menu,pos.x,pos.y);
 			mOpen = true;
 		}
 
@@ -80,12 +81,25 @@ class tower{
 			textSize(radius/1.5);
 
 			fill(255);
-			ellipse(pos.x + radius*2,pos.y + radius*2,radius*2,radius*2);
-			if(dist(mouseX,mouseY,pos.x + radius*2,pos.y + radius*2) < radius*0.75){
+			// ellipse(pos.x + radius*2.5,pos.y + radius*2.5,radius*2,radius*2);
+			if(dist(mouseX,mouseY,pos.x + radius*2.5,pos.y + radius*2.5) < radius*0.75){
 				fill(255);
 				rect(mouseX,mouseY,radius*12,radius*8);
 				fill(0);
-				text("this turns it yellow",mouseX + radius*3, mouseY + radius);
+				text("Occultist",mouseX + radius*3, mouseY + radius);
+				if(mousePressed){
+					type = 4;
+					mOpen = false;
+				}
+			}
+
+			fill(255);
+			// ellipse(pos.x - radius*2.5,pos.y + radius*2.5,radius*2,radius*2);
+			if(dist(mouseX,mouseY,pos.x - radius*2.5,pos.y + radius*2.5) < radius*0.75){
+				fill(255);
+				rect(mouseX,mouseY,radius*12,radius*8);
+				fill(0);
+				text("Archer",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
 					type = 1;
 					mOpen = false;
@@ -93,25 +107,12 @@ class tower{
 			}
 
 			fill(255);
-			ellipse(pos.x - radius*2,pos.y + radius*2,radius*2,radius*2);
-			if(dist(mouseX,mouseY,pos.x - radius*2,pos.y + radius*2) < radius*0.75){
+			// ellipse(pos.x + radius*2.5,pos.y - radius*2.5,radius*2,radius*2);
+			if(dist(mouseX,mouseY,pos.x + radius*2.5,pos.y - radius*2.5) < radius*0.75){
 				fill(255);
 				rect(mouseX,mouseY,radius*12,radius*8);
 				fill(0);
-				text("this turns it blue",mouseX + radius*3, mouseY + radius);
-				if(mousePressed){
-					type = 2;
-					mOpen = false;
-				}
-			}
-
-			fill(255);
-			ellipse(pos.x + radius*2,pos.y - radius*2,radius*2,radius*2);
-			if(dist(mouseX,mouseY,pos.x + radius*2,pos.y - radius*2) < radius*0.75){
-				fill(255);
-				rect(mouseX,mouseY,radius*12,radius*8);
-				fill(0);
-				text("this turns it red",mouseX + radius*3, mouseY + radius);
+				text("Repeater",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
 					type = 3;
 					mOpen = false;
@@ -119,14 +120,14 @@ class tower{
 			}
 
 			fill(255);
-			ellipse(pos.x - radius*2,pos.y - radius*2,radius*2,radius*2);
-			if(dist(mouseX,mouseY,pos.x - radius*2,pos.y - radius*2) < radius*0.75){
+			// ellipse(pos.x - radius*2.5,pos.y - radius*2.5,radius*2,radius*2);
+			if(dist(mouseX,mouseY,pos.x - radius*2.5,pos.y - radius*2.5) < radius*0.75){
 				fill(255);
 				rect(mouseX,mouseY,radius*12,radius*8);
 				fill(0);
-				text("this turns it green",mouseX + radius*3, mouseY + radius);
+				text("Mage",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
-					type = 4;
+					type = 2;
 					mOpen = false;
 				}
 			} //display the round menu thing yes
@@ -139,7 +140,8 @@ class tower{
 	}
 
 	void attack(){
-		for(int i = testCamp.enemyList.size(); i < 0; i--){
+		for(int i = testCamp.enemyList.size()-1; i > 0; i--){
+			println("haha yeah man");
 			switch(type){
 				case 1:
 					//Archer

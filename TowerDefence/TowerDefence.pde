@@ -6,11 +6,11 @@ PImage background;
 void setup(){
 	size(1280,720);
 	imageMode(CENTER);
-	oneTower = new tower(width/2,height/2);
-
 	manaPool = new mana(1100,510);
 
 	testCamp = new camp(0,0,0);
+
+	oneTower = new tower(width/2,height/2);
 
 	background = loadImage("data/map.png");
 	background.resize(width,height);
@@ -18,11 +18,11 @@ void setup(){
 
 void draw(){
 	image(background,width/2,height/2);
+	testCamp.run();
+
 	oneTower.run();
 
 	manaPool.run();
-
-	testCamp.run();
 
 	runCollision();
 }

@@ -66,8 +66,13 @@ class camp{
 	}
 
 	void runEnemys(){
-		for(int i = 0; i < enemyList.size(); i++){
-			enemyList.get(i).run();
+		for(int i = enemyList.size()-1; i > 0; i--){
+
+			if(enemyList.get(i).health <= 0){
+				enemyList.remove(i);
+			} else {
+				enemyList.get(i).run();
+			}
 		}
 	}
 }
