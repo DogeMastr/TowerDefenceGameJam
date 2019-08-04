@@ -44,6 +44,8 @@ public void setup(){
 public void draw(){
 	if(!pause){
 		image(background,width/2,height/2);
+		tui.run();
+
 		testCamp.run();
 
 		oneTower.run();
@@ -52,7 +54,6 @@ public void draw(){
 
 		runCollision();
 
-		tui.run();
 	} else {
 		fill(82,10);
 		rect(0,0,width,height);
@@ -69,6 +70,14 @@ public void runCollision(){
 			manaPool.amount -= testCamp.enemyList.get(i).damage;
 			testCamp.enemyList.remove(i);
 		}
+	}
+}
+
+public boolean gameover(){
+	if(manaPool.amount < 0){
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -135,12 +144,26 @@ class camp{
 
 	public void summon(){
 		if(countdown == 0){
-			for(int i = 0; i < 10; i++){
+			for(int i = 0; i < 5; i++){
 
-				int type = (int)random(1,3);
-
-				float rY = (int)random(40,200);
-				enemyList.add(new enemy(-30,rY,type));
+				float rY = random(40,200);
+				float rX = random(-30,-10);
+				int type;
+				float rng = random(0,100);
+				if(45 > rng){
+					type = 1;
+					enemyList.add(new enemy(rX,rY,type));
+				} else if(rng > 75){
+					type = 2;
+					enemyList.add(new enemy(rX,rY,type));
+					enemyList.add(new enemy(rX,rY,type));
+				} else if(rng > 90){
+					type = 3;
+					enemyList.add(new enemy(rX,rY,type));
+				} else if(rng > 95){
+				  type = 4;
+					enemyList.add(new enemy(rX,rY,type));
+				}
 
 			}
 			countdown = 120;
@@ -154,7 +177,7 @@ class camp{
 			if(enemyList.get(i).health <= 0){
 
 				//particle effect here thanks
-				
+
 				enemyList.remove(i);
 
 			} else {
@@ -231,7 +254,6 @@ class enemy{
 		goal5.set(random(905,1040),random(110,217));
 		goal6.set(random(922,1035),random(450,560));
 		goal.set(goal1);
-		type = (int)random(0,5);
 		switch(type){
 			case 1: //goblins
 				speed = 2;
@@ -454,8 +476,10 @@ class tower{
 				fill(0);
 				text("Occultist",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
-					type = 4;
-					mOpen = false;
+					if(manaPool.amount > 20){
+						type = 4;
+						mOpen = false;
+					}
 				}
 			}
 
@@ -467,8 +491,10 @@ class tower{
 				fill(0);
 				text("Archer",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
-					type = 1;
-					mOpen = false;
+					if(manaPool.amount > 20){
+						type = 1;
+						mOpen = false;
+					}
 				}
 			}
 
@@ -480,8 +506,10 @@ class tower{
 				fill(0);
 				text("Repeater",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
-					type = 3;
-					mOpen = false;
+					if(manaPool.amount > 20){
+						type = 3;
+						mOpen = false;
+					}
 				}
 			}
 
@@ -493,8 +521,10 @@ class tower{
 				fill(0);
 				text("Mage",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
-					type = 2;
-					mOpen = false;
+					if(manaPool.amount > 20){
+						type = 2;
+						mOpen = false;
+					}
 				}
 			} //display the round menu thing yes
 		}
@@ -570,6 +600,7 @@ class trap{
 	PVector pos;
 	int type;
 	boolean drag;
+	int countdown;
 
 	trap(int t){
 		pos = new PVector();
@@ -589,12 +620,23 @@ class trap{
 	public void run(){
 		dragging();
 		display();
+		attack();
+		countdown();
 	}
 	public void dragging(){
 		if(drag){
 			pos.set(mouseX,mouseY);
 			if(!mousePressed){
 				drag = false;
+				switch(type){
+					case 1:
+						countdown = 200;
+						break;
+					case 2:
+						break;
+					case 3:
+						break;
+				}
 			}
 		}
 	}
@@ -611,6 +653,29 @@ class trap{
 				fill(9,80,70,40);
 				ellipse(pos.x,pos.y,200,200);
 				break;
+		}
+	}
+
+	public void attack(){
+		for(int i = testCamp.enemyList.size()-1; i > 0; i--){
+			switch(type){
+				case 1:
+					if(countdown == 0){
+						if(dist(pos.x,pos.y,testCamp.enemyList.get(i).pos.x,testCamp.enemyList.get(i).pos.y) < 150){
+							testCamp.enemyList.get(i).health -= 30;
+						}
+					}
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+			}
+		}
+	}
+	public void countdown(){
+		if(!drag && countdown > 0){
+			countdown--;
 		}
 	}
 }
@@ -646,13 +711,22 @@ class trapui{
 			if(mouseY > 620){
 				if(mouseY < 680){
 					if(mouseX > 480 && mouseX < 550){
-						trapList.add(new trap(1));
+						if(manaPool.amount > 40){
+							trapList.add(new trap(1));
+							manaPool.amount -= 40;
+						}
 					}
 					if(mouseX > 600 && mouseX < 670){
-						trapList.add(new trap(2));
+						if(manaPool.amount > 20){
+							trapList.add(new trap(2));
+							manaPool.amount -= 20;
+						}
 					}
 					if(mouseX > 722 && mouseX < 790){
-						trapList.add(new trap(3));
+						if(manaPool.amount > 80){
+							trapList.add(new trap(3));
+							manaPool.amount -= 80;
+						}
 					}
 				}
 			}

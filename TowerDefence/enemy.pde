@@ -66,7 +66,6 @@ class enemy{
 		goal5.set(random(905,1040),random(110,217));
 		goal6.set(random(922,1035),random(450,560));
 		goal.set(goal1);
-		type = (int)random(0,5);
 		switch(type){
 			case 1: //goblins
 				speed = 2;

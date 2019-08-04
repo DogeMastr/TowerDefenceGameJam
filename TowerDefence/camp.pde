@@ -52,12 +52,26 @@ class camp{
 
 	void summon(){
 		if(countdown == 0){
-			for(int i = 0; i < 10; i++){
+			for(int i = 0; i < 5; i++){
 
-				int type = (int)random(1,3);
-
-				float rY = (int)random(40,200);
-				enemyList.add(new enemy(-30,rY,type));
+				float rY = random(40,200);
+				float rX = random(-30,-10);
+				int type;
+				float rng = random(0,100);
+				if(45 > rng){
+					type = 1;
+					enemyList.add(new enemy(rX,rY,type));
+				} else if(rng > 75){
+					type = 2;
+					enemyList.add(new enemy(rX,rY,type));
+					enemyList.add(new enemy(rX,rY,type));
+				} else if(rng > 90){
+					type = 3;
+					enemyList.add(new enemy(rX,rY,type));
+				} else if(rng > 95){
+				  type = 4;
+					enemyList.add(new enemy(rX,rY,type));
+				}
 
 			}
 			countdown = 120;
@@ -71,7 +85,7 @@ class camp{
 			if(enemyList.get(i).health <= 0){
 
 				//particle effect here thanks
-				
+
 				enemyList.remove(i);
 
 			} else {

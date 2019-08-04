@@ -88,8 +88,10 @@ class tower{
 				fill(0);
 				text("Occultist",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
-					type = 4;
-					mOpen = false;
+					if(manaPool.amount > 20){
+						type = 4;
+						mOpen = false;
+					}
 				}
 			}
 
@@ -101,8 +103,10 @@ class tower{
 				fill(0);
 				text("Archer",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
-					type = 1;
-					mOpen = false;
+					if(manaPool.amount > 20){
+						type = 1;
+						mOpen = false;
+					}
 				}
 			}
 
@@ -114,8 +118,10 @@ class tower{
 				fill(0);
 				text("Repeater",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
-					type = 3;
-					mOpen = false;
+					if(manaPool.amount > 20){
+						type = 3;
+						mOpen = false;
+					}
 				}
 			}
 
@@ -127,8 +133,10 @@ class tower{
 				fill(0);
 				text("Mage",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
-					type = 2;
-					mOpen = false;
+					if(manaPool.amount > 20){
+						type = 2;
+						mOpen = false;
+					}
 				}
 			} //display the round menu thing yes
 		}

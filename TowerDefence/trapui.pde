@@ -30,13 +30,22 @@ class trapui{
 			if(mouseY > 620){
 				if(mouseY < 680){
 					if(mouseX > 480 && mouseX < 550){
-						trapList.add(new trap(1));
+						if(manaPool.amount > 40){
+							trapList.add(new trap(1));
+							manaPool.amount -= 40;
+						}
 					}
 					if(mouseX > 600 && mouseX < 670){
-						trapList.add(new trap(2));
+						if(manaPool.amount > 20){
+							trapList.add(new trap(2));
+							manaPool.amount -= 20;
+						}
 					}
 					if(mouseX > 722 && mouseX < 790){
-						trapList.add(new trap(3));
+						if(manaPool.amount > 80){
+							trapList.add(new trap(3));
+							manaPool.amount -= 80;
+						}
 					}
 				}
 			}

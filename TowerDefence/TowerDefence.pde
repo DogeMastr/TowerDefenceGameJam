@@ -1,3 +1,10 @@
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
+import ddf.minim.signals.*;
+import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
+
 tower oneTower;
 camp testCamp;
 mana manaPool;
@@ -28,6 +35,8 @@ void setup(){
 void draw(){
 	if(!pause){
 		image(background,width/2,height/2);
+		tui.run();
+
 		testCamp.run();
 
 		oneTower.run();
@@ -36,7 +45,6 @@ void draw(){
 
 		runCollision();
 
-		tui.run();
 	} else {
 		fill(82,10);
 		rect(0,0,width,height);
@@ -53,6 +61,14 @@ void runCollision(){
 			manaPool.amount -= testCamp.enemyList.get(i).damage;
 			testCamp.enemyList.remove(i);
 		}
+	}
+}
+
+boolean gameover(){
+	if(manaPool.amount < 0){
+		return true;
+	} else {
+		return false;
 	}
 }
 
