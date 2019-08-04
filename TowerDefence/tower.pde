@@ -77,6 +77,7 @@ class tower{
 		}
 
 		if(mOpen){
+			imageMode(CORNER);
 			textAlign(CENTER);
 			textSize(radius/1.5);
 
@@ -84,11 +85,13 @@ class tower{
 			// ellipse(pos.x + radius*2.5,pos.y + radius*2.5,radius*2,radius*2);
 			if(dist(mouseX,mouseY,pos.x + radius*2.5,pos.y + radius*2.5) < radius*0.75){
 				fill(255);
-				rect(mouseX,mouseY,radius*12,radius*8);
-				fill(0);
+				// rect(mouseX,mouseY,radius*12,radius*8);
+				image(textbacking,mouseX,mouseY);
+				fill(255);
 				text("Occultist",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
 					if(manaPool.amount > 20){
+						change.play();
 						type = 4;
 						mOpen = false;
 					}
@@ -99,11 +102,13 @@ class tower{
 			// ellipse(pos.x - radius*2.5,pos.y + radius*2.5,radius*2,radius*2);
 			if(dist(mouseX,mouseY,pos.x - radius*2.5,pos.y + radius*2.5) < radius*0.75){
 				fill(255);
-				rect(mouseX,mouseY,radius*12,radius*8);
-				fill(0);
+				// rect(mouseX,mouseY,radius*12,radius*8);
+				image(textbacking,mouseX,mouseY);
+				fill(255);
 				text("Archer",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
 					if(manaPool.amount > 20){
+						change.play();
 						type = 1;
 						mOpen = false;
 					}
@@ -114,11 +119,13 @@ class tower{
 			// ellipse(pos.x + radius*2.5,pos.y - radius*2.5,radius*2,radius*2);
 			if(dist(mouseX,mouseY,pos.x + radius*2.5,pos.y - radius*2.5) < radius*0.75){
 				fill(255);
-				rect(mouseX,mouseY,radius*12,radius*8);
-				fill(0);
+				// rect(mouseX,mouseY,radius*12,radius*8);
+				image(textbacking,mouseX,mouseY);
+				fill(255);
 				text("Repeater",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
 					if(manaPool.amount > 20){
+						change.play();
 						type = 3;
 						mOpen = false;
 					}
@@ -129,11 +136,13 @@ class tower{
 			// ellipse(pos.x - radius*2.5,pos.y - radius*2.5,radius*2,radius*2);
 			if(dist(mouseX,mouseY,pos.x - radius*2.5,pos.y - radius*2.5) < radius*0.75){
 				fill(255);
-				rect(mouseX,mouseY,radius*12,radius*8);
-				fill(0);
+				// rect(mouseX,mouseY,radius*12,radius*8);
+				image(textbacking,mouseX,mouseY);
+				fill(255);
 				text("Mage",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
 					if(manaPool.amount > 20){
+						change.play();
 						type = 2;
 						mOpen = false;
 					}

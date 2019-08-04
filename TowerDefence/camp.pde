@@ -85,6 +85,7 @@ class camp{
 			if(enemyList.get(i).health <= 0){
 
 				//particle effect here thanks
+				death.loop();
 
 				enemyList.remove(i);
 

@@ -55,6 +55,9 @@ class trapui{
 	void runTraps(){
 		for(int i = trapList.size() - 1; i > 0; i--){
 			trapList.get(i).run();
+			if(trapList.get(i).finished){
+				trapList.remove(i);
+			}
 		}
 	}
 

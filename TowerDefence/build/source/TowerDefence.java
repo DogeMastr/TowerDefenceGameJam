@@ -3,6 +3,8 @@ import processing.data.*;
 import processing.event.*; 
 import processing.opengl.*; 
 
+import processing.sound.*; 
+
 import java.util.HashMap; 
 import java.util.ArrayList; 
 import java.io.File; 
@@ -14,17 +16,38 @@ import java.io.IOException;
 
 public class TowerDefence extends PApplet {
 
+
+
 tower oneTower;
 camp testCamp;
 mana manaPool;
 
 trapui tui;
 PImage background;
+PImage textbacking;
 
 boolean pause;
 
+SoundFile  death;
+SoundFile  shoot;
+SoundFile  explosion;
+SoundFile  damage;
+SoundFile  blast;
+SoundFile  change;
+
+
 public void setup(){
+
+	death = new SoundFile(this, "sounds/blast.wav");
+	shoot = new SoundFile(this, "data/sounds/shoot.wav");
+	explosion = new SoundFile(this, "data/sounds/explosion.wav");
+	damage = new SoundFile(this, "data/sounds/damage.wav");
+	blast = new SoundFile(this, "data/sounds/blast.wav");
+	change = new SoundFile(this, "data/sounds/change.wav");
+
 	
+
+	textbacking = loadImage("data/ui/text.png");
 
 	pause = true;
 
@@ -43,6 +66,7 @@ public void setup(){
 
 public void draw(){
 	if(!pause){
+		imageMode(CENTER);
 		image(background,width/2,height/2);
 		tui.run();
 
@@ -69,6 +93,7 @@ public void runCollision(){
 		if(testCamp.enemyList.get(i).collision(manaPool)){
 			manaPool.amount -= testCamp.enemyList.get(i).damage;
 			testCamp.enemyList.remove(i);
+			damage.play();
 		}
 	}
 }
@@ -177,6 +202,7 @@ class camp{
 			if(enemyList.get(i).health <= 0){
 
 				//particle effect here thanks
+				death.loop();
 
 				enemyList.remove(i);
 
@@ -465,6 +491,7 @@ class tower{
 		}
 
 		if(mOpen){
+			imageMode(CORNER);
 			textAlign(CENTER);
 			textSize(radius/1.5f);
 
@@ -472,11 +499,13 @@ class tower{
 			// ellipse(pos.x + radius*2.5,pos.y + radius*2.5,radius*2,radius*2);
 			if(dist(mouseX,mouseY,pos.x + radius*2.5f,pos.y + radius*2.5f) < radius*0.75f){
 				fill(255);
-				rect(mouseX,mouseY,radius*12,radius*8);
-				fill(0);
+				// rect(mouseX,mouseY,radius*12,radius*8);
+				image(textbacking,mouseX,mouseY);
+				fill(255);
 				text("Occultist",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
 					if(manaPool.amount > 20){
+						change.play();
 						type = 4;
 						mOpen = false;
 					}
@@ -487,11 +516,13 @@ class tower{
 			// ellipse(pos.x - radius*2.5,pos.y + radius*2.5,radius*2,radius*2);
 			if(dist(mouseX,mouseY,pos.x - radius*2.5f,pos.y + radius*2.5f) < radius*0.75f){
 				fill(255);
-				rect(mouseX,mouseY,radius*12,radius*8);
-				fill(0);
+				// rect(mouseX,mouseY,radius*12,radius*8);
+				image(textbacking,mouseX,mouseY);
+				fill(255);
 				text("Archer",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
 					if(manaPool.amount > 20){
+						change.play();
 						type = 1;
 						mOpen = false;
 					}
@@ -502,11 +533,13 @@ class tower{
 			// ellipse(pos.x + radius*2.5,pos.y - radius*2.5,radius*2,radius*2);
 			if(dist(mouseX,mouseY,pos.x + radius*2.5f,pos.y - radius*2.5f) < radius*0.75f){
 				fill(255);
-				rect(mouseX,mouseY,radius*12,radius*8);
-				fill(0);
+				// rect(mouseX,mouseY,radius*12,radius*8);
+				image(textbacking,mouseX,mouseY);
+				fill(255);
 				text("Repeater",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
 					if(manaPool.amount > 20){
+						change.play();
 						type = 3;
 						mOpen = false;
 					}
@@ -517,11 +550,13 @@ class tower{
 			// ellipse(pos.x - radius*2.5,pos.y - radius*2.5,radius*2,radius*2);
 			if(dist(mouseX,mouseY,pos.x - radius*2.5f,pos.y - radius*2.5f) < radius*0.75f){
 				fill(255);
-				rect(mouseX,mouseY,radius*12,radius*8);
-				fill(0);
+				// rect(mouseX,mouseY,radius*12,radius*8);
+				image(textbacking,mouseX,mouseY);
+				fill(255);
 				text("Mage",mouseX + radius*3, mouseY + radius);
 				if(mousePressed){
 					if(manaPool.amount > 20){
+						change.play();
 						type = 2;
 						mOpen = false;
 					}
@@ -602,12 +637,15 @@ class trap{
 	boolean drag;
 	int countdown;
 
+	int icecountdown;
+
+	boolean finished;
 	trap(int t){
 		pos = new PVector();
-
+		finished = false;
 		drag = true;
 		type = t;
-
+		icecountdown = 120;
 		/*
 			Trap types
 
@@ -659,16 +697,47 @@ class trap{
 	public void attack(){
 		for(int i = testCamp.enemyList.size()-1; i > 0; i--){
 			switch(type){
-				case 1:
+				case 1://fire
 					if(countdown == 0){
 						if(dist(pos.x,pos.y,testCamp.enemyList.get(i).pos.x,testCamp.enemyList.get(i).pos.y) < 150){
 							testCamp.enemyList.get(i).health -= 30;
+							finished = true;
 						}
 					}
 					break;
 				case 2:
+					if(countdown == 0){
+						if(dist(pos.x,pos.y,testCamp.enemyList.get(i).pos.x,testCamp.enemyList.get(i).pos.y) < 150){
+							if(icecountdown > 0){
+								testCamp.enemyList.get(i).health -= 2;
+								finished = true;
+							}
+						}
+					}
 					break;
 				case 3:
+					if(countdown == 0){
+						if(dist(pos.x,pos.y,testCamp.enemyList.get(i).pos.x,testCamp.enemyList.get(i).pos.y) < 200){
+							if(icecountdown > 0){
+								testCamp.enemyList.get(i).speed = 0;
+							} else {
+								switch(testCamp.enemyList.get(i).type){
+									case 1: //goblins
+										testCamp.enemyList.get(i).speed = 2;
+										break;
+									case 2:	//sssskkkellitions
+										testCamp.enemyList.get(i).speed = 1.25f;
+										break;
+									case 3: //skelly guards
+										testCamp.enemyList.get(i).speed = 1.15f;
+										break;
+									case 4: //shreck 5
+										testCamp.enemyList.get(i).speed = 0.4f;
+								}
+								finished = true;
+							}
+						}
+					}
 					break;
 			}
 		}
@@ -736,6 +805,9 @@ class trapui{
 	public void runTraps(){
 		for(int i = trapList.size() - 1; i > 0; i--){
 			trapList.get(i).run();
+			if(trapList.get(i).finished){
+				trapList.remove(i);
+			}
 		}
 	}
 

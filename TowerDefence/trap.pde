@@ -4,12 +4,15 @@ class trap{
 	boolean drag;
 	int countdown;
 
+	int icecountdown;
+
+	boolean finished;
 	trap(int t){
 		pos = new PVector();
-
+		finished = false;
 		drag = true;
 		type = t;
-
+		icecountdown = 120;
 		/*
 			Trap types
 
@@ -61,16 +64,47 @@ class trap{
 	void attack(){
 		for(int i = testCamp.enemyList.size()-1; i > 0; i--){
 			switch(type){
-				case 1:
+				case 1://fire
 					if(countdown == 0){
 						if(dist(pos.x,pos.y,testCamp.enemyList.get(i).pos.x,testCamp.enemyList.get(i).pos.y) < 150){
 							testCamp.enemyList.get(i).health -= 30;
+							finished = true;
 						}
 					}
 					break;
 				case 2:
+					if(countdown == 0){
+						if(dist(pos.x,pos.y,testCamp.enemyList.get(i).pos.x,testCamp.enemyList.get(i).pos.y) < 150){
+							if(icecountdown > 0){
+								testCamp.enemyList.get(i).health -= 2;
+								finished = true;
+							}
+						}
+					}
 					break;
 				case 3:
+					if(countdown == 0){
+						if(dist(pos.x,pos.y,testCamp.enemyList.get(i).pos.x,testCamp.enemyList.get(i).pos.y) < 200){
+							if(icecountdown > 0){
+								testCamp.enemyList.get(i).speed = 0;
+							} else {
+								switch(testCamp.enemyList.get(i).type){
+									case 1: //goblins
+										testCamp.enemyList.get(i).speed = 2;
+										break;
+									case 2:	//sssskkkellitions
+										testCamp.enemyList.get(i).speed = 1.25;
+										break;
+									case 3: //skelly guards
+										testCamp.enemyList.get(i).speed = 1.15;
+										break;
+									case 4: //shreck 5
+										testCamp.enemyList.get(i).speed = 0.4;
+								}
+								finished = true;
+							}
+						}
+					}
 					break;
 			}
 		}

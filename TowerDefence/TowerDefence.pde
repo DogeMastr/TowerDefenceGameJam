@@ -1,9 +1,4 @@
-import ddf.minim.*;
-import ddf.minim.analysis.*;
-import ddf.minim.effects.*;
-import ddf.minim.signals.*;
-import ddf.minim.spi.*;
-import ddf.minim.ugens.*;
+import processing.sound.*;
 
 tower oneTower;
 camp testCamp;
@@ -11,11 +6,30 @@ mana manaPool;
 
 trapui tui;
 PImage background;
+PImage textbacking;
 
 boolean pause;
 
+SoundFile  death;
+SoundFile  shoot;
+SoundFile  explosion;
+SoundFile  damage;
+SoundFile  blast;
+SoundFile  change;
+
+
 void setup(){
+
+	death = new SoundFile(this, "sounds/blast.wav");
+	shoot = new SoundFile(this, "data/sounds/shoot.wav");
+	explosion = new SoundFile(this, "data/sounds/explosion.wav");
+	damage = new SoundFile(this, "data/sounds/damage.wav");
+	blast = new SoundFile(this, "data/sounds/blast.wav");
+	change = new SoundFile(this, "data/sounds/change.wav");
+
 	size(1280,720);
+
+	textbacking = loadImage("data/ui/text.png");
 
 	pause = true;
 
@@ -34,6 +48,7 @@ void setup(){
 
 void draw(){
 	if(!pause){
+		imageMode(CENTER);
 		image(background,width/2,height/2);
 		tui.run();
 
@@ -60,6 +75,7 @@ void runCollision(){
 		if(testCamp.enemyList.get(i).collision(manaPool)){
 			manaPool.amount -= testCamp.enemyList.get(i).damage;
 			testCamp.enemyList.remove(i);
+			damage.play();
 		}
 	}
 }
