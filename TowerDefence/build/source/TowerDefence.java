@@ -18,6 +18,7 @@ tower oneTower;
 camp testCamp;
 mana manaPool;
 
+trapui tui;
 PImage background;
 
 boolean pause;
@@ -37,7 +38,7 @@ public void setup(){
 	background = loadImage("data/map.png");
 	background.resize(width,height);
 
-
+	tui = new trapui();
 }
 
 public void draw(){
@@ -50,6 +51,8 @@ public void draw(){
 		manaPool.run();
 
 		runCollision();
+
+		tui.run();
 	} else {
 		fill(82,10);
 		rect(0,0,width,height);
@@ -391,7 +394,7 @@ class tower{
 		repeater = loadImage("data/towers/RepeaterTower.png");
 		occultist = loadImage("data/towers/OccultistTower.png");
 
-		menu = loadImage("data/menu.png");
+		menu = loadImage("data/ui/menu.png");
 
 		archer.resize(50,50);
 		mage.resize(50,50);
@@ -504,7 +507,6 @@ class tower{
 
 	public void attack(){
 		for(int i = testCamp.enemyList.size()-1; i > 0; i--){
-			println("haha yeah man");
 			switch(type){
 				case 1:
 					//Archer
@@ -563,6 +565,106 @@ class tower{
 			dragging = false;
 		}
 	}
+}
+class trap{
+	PVector pos;
+	int type;
+	boolean drag;
+
+	trap(int t){
+		pos = new PVector();
+
+		drag = true;
+		type = t;
+
+		/*
+			Trap types
+
+			1 = bomb
+			2 = spikes
+			3 = freeze
+
+		*/
+	}
+	public void run(){
+		dragging();
+		display();
+	}
+	public void dragging(){
+		if(drag){
+			pos.set(mouseX,mouseY);
+			if(!mousePressed){
+				drag = false;
+			}
+		}
+	}
+
+	public void display(){
+		switch(type){
+			case 1:
+				image(tui.fire,pos.x,pos.y);
+				break;
+			case 2:
+				image(tui.spike,pos.x,pos.y);
+				break;
+			case 3:
+				fill(9,80,70,40);
+				ellipse(pos.x,pos.y,200,200);
+				break;
+		}
+	}
+}
+class trapui{
+
+	PImage ui;
+
+	PImage fire;
+	PImage spike;
+
+	ArrayList<trap> trapList;
+	trapui(){
+
+		trapList = new ArrayList<trap>();
+
+		ui = loadImage("data/ui/trap.png");
+
+		fire = loadImage("data/traps/fire.png");
+		spike = loadImage("data/traps/spike.png");
+	}
+
+	public void run(){
+		display();
+		select();
+		runTraps();
+	}
+	public void display(){
+		image(ui,width/2,height-height/10);
+	}
+
+	public void select(){
+		if(mousePressed){
+			if(mouseY > 620){
+				if(mouseY < 680){
+					if(mouseX > 480 && mouseX < 550){
+						trapList.add(new trap(1));
+					}
+					if(mouseX > 600 && mouseX < 670){
+						trapList.add(new trap(2));
+					}
+					if(mouseX > 722 && mouseX < 790){
+						trapList.add(new trap(3));
+					}
+				}
+			}
+		}
+	}
+
+	public void runTraps(){
+		for(int i = trapList.size() - 1; i > 0; i--){
+			trapList.get(i).run();
+		}
+	}
+
 }
   public void settings() { 	size(1280,720); }
   static public void main(String[] passedArgs) {

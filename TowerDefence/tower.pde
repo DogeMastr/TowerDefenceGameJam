@@ -141,7 +141,6 @@ class tower{
 
 	void attack(){
 		for(int i = testCamp.enemyList.size()-1; i > 0; i--){
-			println("haha yeah man");
 			switch(type){
 				case 1:
 					//Archer

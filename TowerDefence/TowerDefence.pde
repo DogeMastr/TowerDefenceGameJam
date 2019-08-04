@@ -2,6 +2,7 @@ tower oneTower;
 camp testCamp;
 mana manaPool;
 
+trapui tui;
 PImage background;
 
 boolean pause;
@@ -21,7 +22,7 @@ void setup(){
 	background = loadImage("data/map.png");
 	background.resize(width,height);
 
-
+	tui = new trapui();
 }
 
 void draw(){
@@ -34,6 +35,8 @@ void draw(){
 		manaPool.run();
 
 		runCollision();
+
+		tui.run();
 	} else {
 		fill(82,10);
 		rect(0,0,width,height);
