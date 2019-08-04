@@ -28,7 +28,7 @@ class tower{
 		repeater = loadImage("data/towers/RepeaterTower.png");
 		occultist = loadImage("data/towers/OccultistTower.png");
 
-		menu = loadImage("data/menu.png");
+		menu = loadImage("data/ui/menu.png");
 
 		archer.resize(50,50);
 		mage.resize(50,50);

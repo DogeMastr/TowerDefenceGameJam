@@ -3,8 +3,14 @@ camp testCamp;
 mana manaPool;
 
 PImage background;
+
+boolean pause;
+
 void setup(){
 	size(1280,720);
+
+	pause = true;
+
 	imageMode(CENTER);
 	manaPool = new mana(1100,510);
 
@@ -14,17 +20,28 @@ void setup(){
 
 	background = loadImage("data/map.png");
 	background.resize(width,height);
+
+
 }
 
 void draw(){
-	image(background,width/2,height/2);
-	testCamp.run();
+	if(!pause){
+		image(background,width/2,height/2);
+		testCamp.run();
 
-	oneTower.run();
+		oneTower.run();
 
-	manaPool.run();
+		manaPool.run();
 
-	runCollision();
+		runCollision();
+	} else {
+		fill(82,10);
+		rect(0,0,width,height);
+		textSize(100);
+		textAlign(CENTER,CENTER);
+		fill(255);
+		text("PAUSED",width/2,height/2);
+	}
 }
 
 void runCollision(){
@@ -32,6 +49,16 @@ void runCollision(){
 		if(testCamp.enemyList.get(i).collision(manaPool)){
 			manaPool.amount -= testCamp.enemyList.get(i).damage;
 			testCamp.enemyList.remove(i);
+		}
+	}
+}
+
+void keyReleased(){
+	if(key == ' '){
+		if(pause){
+			pause = false;
+		} else {
+			pause = true;
 		}
 	}
 }

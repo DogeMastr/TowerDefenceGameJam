@@ -19,8 +19,14 @@ camp testCamp;
 mana manaPool;
 
 PImage background;
+
+boolean pause;
+
 public void setup(){
 	
+
+	pause = true;
+
 	imageMode(CENTER);
 	manaPool = new mana(1100,510);
 
@@ -30,17 +36,28 @@ public void setup(){
 
 	background = loadImage("data/map.png");
 	background.resize(width,height);
+
+
 }
 
 public void draw(){
-	image(background,width/2,height/2);
-	testCamp.run();
+	if(!pause){
+		image(background,width/2,height/2);
+		testCamp.run();
 
-	oneTower.run();
+		oneTower.run();
 
-	manaPool.run();
+		manaPool.run();
 
-	runCollision();
+		runCollision();
+	} else {
+		fill(82,10);
+		rect(0,0,width,height);
+		textSize(100);
+		textAlign(CENTER,CENTER);
+		fill(255);
+		text("PAUSED",width/2,height/2);
+	}
 }
 
 public void runCollision(){
@@ -48,6 +65,16 @@ public void runCollision(){
 		if(testCamp.enemyList.get(i).collision(manaPool)){
 			manaPool.amount -= testCamp.enemyList.get(i).damage;
 			testCamp.enemyList.remove(i);
+		}
+	}
+}
+
+public void keyReleased(){
+	if(key == ' '){
+		if(pause){
+			pause = false;
+		} else {
+			pause = true;
 		}
 	}
 }
@@ -122,7 +149,11 @@ class camp{
 		for(int i = enemyList.size()-1; i > 0; i--){
 
 			if(enemyList.get(i).health <= 0){
+
+				//particle effect here thanks
+				
 				enemyList.remove(i);
+
 			} else {
 				enemyList.get(i).run();
 			}
