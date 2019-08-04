@@ -26,6 +26,9 @@ trapui tui;
 PImage background;
 PImage textbacking;
 
+int kills;
+int gametimer;
+
 boolean pause;
 
 SoundFile  death;
@@ -37,6 +40,9 @@ SoundFile  change;
 
 
 public void setup(){
+
+	kills = 0;
+	gametimer = 0;
 
 	death = new SoundFile(this, "sounds/blast.wav");
 	shoot = new SoundFile(this, "data/sounds/shoot.wav");
@@ -65,27 +71,72 @@ public void setup(){
 }
 
 public void draw(){
-	if(!pause){
-		imageMode(CENTER);
-		image(background,width/2,height/2);
-		tui.run();
+	if(!gameover()){
+		if(!pause){
+			imageMode(CENTER);
+			image(background,width/2,height/2);
+			tui.run();
 
-		testCamp.run();
+			testCamp.run();
 
-		oneTower.run();
+			oneTower.run();
 
-		manaPool.run();
+			manaPool.run();
 
-		runCollision();
-
+			runCollision();
+			gametimer++;
+		} else {
+			fill(82,10);
+			rect(0,0,width,height);
+			textSize(100);
+			textAlign(CENTER,CENTER);
+			fill(255);
+			text("ONLY ONE TOWER",width/2,height/3);
+			textSize(30);
+			text("(defence)",width/2 ,height/3 + 80);
+			text("Press space to start, pause & unpause",width/2,height/2);
+			text("Left click and drag your tower to defend",width/2,height/2 + 40);
+			text("Right click and select to change your tower",width/2,height/2+80);
+			text("Click and drag traps to place them", width/2, height/2 + 120);
+			text("You gain 1 mana every second", width/2, height/2 + 160);
+			text("Code by DogeMastr, Art by Infinnitor",width/2,height- height/5 + 40);
+			text("Made in 48~ hours for the GMTK-only-one gamejam",width/2,height- height/5 + 80);
+		}
 	} else {
 		fill(82,10);
 		rect(0,0,width,height);
 		textSize(100);
 		textAlign(CENTER,CENTER);
 		fill(255);
-		text("PAUSED",width/2,height/2);
+		textSize(100);
+		text("YOU LOST", width/2,height/3);
+		textSize(30);
+		text("Hope you had fun playing!", width/2,height/2);
+		text("You killed " + kills + " monsters!", width/2,height/2 + 40);
+		text("You lasted " + gametimer + " frames!", width/2,height/2 + 80);
+		text("press space to play again!", width/2, height/2 + 120);
+
+		if(keyPressed){
+			if(key == ' '){
+				reset();
+			}
+		}
 	}
+}
+
+public void reset(){
+
+		kills = 0;
+		gametimer = 0;
+
+		imageMode(CENTER);
+		manaPool = new mana(1100,510);
+
+		testCamp = new camp(0,0,0);
+
+		oneTower = new tower(width/2,height/2);
+
+		tui = new trapui();
 }
 
 public void runCollision(){
@@ -182,10 +233,10 @@ class camp{
 					type = 2;
 					enemyList.add(new enemy(rX,rY,type));
 					enemyList.add(new enemy(rX,rY,type));
-				} else if(rng > 90){
+				} else if(rng > 85){
 					type = 3;
 					enemyList.add(new enemy(rX,rY,type));
-				} else if(rng > 95){
+				} else if(rng > 90){
 				  type = 4;
 					enemyList.add(new enemy(rX,rY,type));
 				}
@@ -202,10 +253,10 @@ class camp{
 			if(enemyList.get(i).health <= 0){
 
 				//particle effect here thanks
-				death.loop();
+				death.play();
 
 				enemyList.remove(i);
-
+				kills++;
 			} else {
 				enemyList.get(i).run();
 			}
@@ -393,10 +444,10 @@ class mana{
 
 	public void display(){
 		fill(40,203,239);
-		ellipse(pos.x,pos.y,radius*2,radius*2);
 
 		textSize(60);
-		text(amount,width/2,height - height/10);
+		textAlign(CENTER);
+		text(amount,width/2,height/10);
 	}
 
 	public void gain(){
@@ -493,7 +544,7 @@ class tower{
 		if(mOpen){
 			imageMode(CORNER);
 			textAlign(CENTER);
-			textSize(radius/1.5f);
+			textSize(20);
 
 			fill(255);
 			// ellipse(pos.x + radius*2.5,pos.y + radius*2.5,radius*2,radius*2);
@@ -502,7 +553,9 @@ class tower{
 				// rect(mouseX,mouseY,radius*12,radius*8);
 				image(textbacking,mouseX,mouseY);
 				fill(255);
-				text("Occultist",mouseX + radius*3, mouseY + radius);
+				text("Occult's Eye",mouseX + radius*3, mouseY + 40);
+				text("Fires an ethereal high damage projectile",mouseX + radius*3, mouseY + 60);
+				text("dealing massive damage and draining mana.",mouseX + radius*3, mouseY + 80);
 				if(mousePressed){
 					if(manaPool.amount > 20){
 						change.play();
@@ -519,9 +572,11 @@ class tower{
 				// rect(mouseX,mouseY,radius*12,radius*8);
 				image(textbacking,mouseX,mouseY);
 				fill(255);
-				text("Archer",mouseX + radius*3, mouseY + radius);
+				text("Archer Tower: 20 MANA",mouseX + radius*3, mouseY + 40);
+				text("Steadily fires arrows at enemies.",mouseX + radius*3, mouseY + 60);
 				if(mousePressed){
 					if(manaPool.amount > 20){
+						manaPool.amount -= 20;
 						change.play();
 						type = 1;
 						mOpen = false;
@@ -536,9 +591,12 @@ class tower{
 				// rect(mouseX,mouseY,radius*12,radius*8);
 				image(textbacking,mouseX,mouseY);
 				fill(255);
-				text("Repeater",mouseX + radius*3, mouseY + radius);
+				text("Repeater: 20 MANA",mouseX + radius*3,mouseY + 40);
+				text("Advanced technology that rapidly fires arrows at high speeds towards enemies,",mouseX + radius*3, mouseY + 60);
+				text("but does less damage and needs to be reloaded frequently.",mouseX + radius*3, mouseY + 80);
 				if(mousePressed){
 					if(manaPool.amount > 20){
+						manaPool.amount -= 20;
 						change.play();
 						type = 3;
 						mOpen = false;
@@ -553,9 +611,11 @@ class tower{
 				// rect(mouseX,mouseY,radius*12,radius*8);
 				image(textbacking,mouseX,mouseY);
 				fill(255);
-				text("Mage",mouseX + radius*3, mouseY + radius);
+				text("Mage: 20 MANA",mouseX + radius*3,mouseY + 40);
+				text("Does more damage with longer cooldowns in between shots.",mouseX + radius*3, mouseY + 60);
 				if(mousePressed){
 					if(manaPool.amount > 20){
+						manaPool.amount -= 20;
 						change.play();
 						type = 2;
 						mOpen = false;
@@ -710,6 +770,9 @@ class trap{
 						if(dist(pos.x,pos.y,testCamp.enemyList.get(i).pos.x,testCamp.enemyList.get(i).pos.y) < 150){
 							if(icecountdown > 0){
 								testCamp.enemyList.get(i).health -= 2;
+								icecountdown -= 2;
+								
+							} else {
 								finished = true;
 							}
 						}
@@ -720,6 +783,7 @@ class trap{
 						if(dist(pos.x,pos.y,testCamp.enemyList.get(i).pos.x,testCamp.enemyList.get(i).pos.y) < 200){
 							if(icecountdown > 0){
 								testCamp.enemyList.get(i).speed = 0;
+								icecountdown--;
 							} else {
 								switch(testCamp.enemyList.get(i).type){
 									case 1: //goblins
@@ -776,22 +840,41 @@ class trapui{
 	}
 
 	public void select(){
-		if(mousePressed){
-			if(mouseY > 620){
-				if(mouseY < 680){
-					if(mouseX > 480 && mouseX < 550){
+
+		textAlign(CENTER,TOP);
+		fill(255);
+		textSize(15);
+		if(mouseY > 620){
+			if(mouseY < 680){
+				if(mouseX > 480 && mouseX < 550){
+					image(textbacking,mouseX,mouseY-100);
+					text("Fire Gas Trap: 40 MANA",mouseX,mouseY - 140);
+					text("A grate that emmits burning gas that caused enemies to sizzle and fry.",mouseX,mouseY - 80);
+					if(mousePressed){
 						if(manaPool.amount > 40){
 							trapList.add(new trap(1));
 							manaPool.amount -= 40;
 						}
 					}
-					if(mouseX > 600 && mouseX < 670){
+				}
+				if(mouseX > 600 && mouseX < 670){
+					image(textbacking,mouseX,mouseY-100);
+					text("Spike Trap: 20 MANA",mouseX,mouseY-140);
+					text("A simple bed of spikes that impale enemies",mouseX,mouseY - 80);
+					text("that dare to wade across",mouseX,mouseY - 60);
+					if(mousePressed){
 						if(manaPool.amount > 20){
 							trapList.add(new trap(2));
 							manaPool.amount -= 20;
 						}
 					}
-					if(mouseX > 722 && mouseX < 790){
+				}
+				if(mouseX > 722 && mouseX < 790){
+					image(textbacking,mouseX,mouseY-100);
+					text("Freeze Spell: 80 MANA",mouseX,mouseY - 140);
+					text("A last ditch spell that freezes and enemies",mouseX,mouseY - 80);
+					text("foolish enough to step into its bounds.",mouseX,mouseY - 60);
+					if(mousePressed){
 						if(manaPool.amount > 80){
 							trapList.add(new trap(3));
 							manaPool.amount -= 80;

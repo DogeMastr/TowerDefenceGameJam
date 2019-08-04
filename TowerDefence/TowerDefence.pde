@@ -1,3 +1,11 @@
+/*
+  MADE BY DOGEMASTR & INFINNITOR
+ 
+ @doge_mastr on twitter
+ Infinnitor doesent have a twitter
+ */
+
+
 import processing.sound.*;
 
 tower oneTower;
@@ -7,6 +15,9 @@ mana manaPool;
 trapui tui;
 PImage background;
 PImage textbacking;
+
+int kills;
+int gametimer;
 
 boolean pause;
 
@@ -18,82 +29,130 @@ SoundFile  blast;
 SoundFile  change;
 
 
-void setup(){
+void setup() {
 
-	death = new SoundFile(this, "sounds/blast.wav");
-	shoot = new SoundFile(this, "data/sounds/shoot.wav");
-	explosion = new SoundFile(this, "data/sounds/explosion.wav");
-	damage = new SoundFile(this, "data/sounds/damage.wav");
-	blast = new SoundFile(this, "data/sounds/blast.wav");
-	change = new SoundFile(this, "data/sounds/change.wav");
+  kills = 0;
+  gametimer = 0;
 
-	size(1280,720);
+  death = new SoundFile(this, "sounds/blast.wav");
+  shoot = new SoundFile(this, "data/sounds/shoot.wav");
+  explosion = new SoundFile(this, "data/sounds/explosion.wav");
+  damage = new SoundFile(this, "data/sounds/damage.wav");
+  blast = new SoundFile(this, "data/sounds/blast.wav");
+  change = new SoundFile(this, "data/sounds/change.wav");
 
-	textbacking = loadImage("data/ui/text.png");
+  size(1280, 720);
 
-	pause = true;
+  textbacking = loadImage("data/ui/text.png");
 
-	imageMode(CENTER);
-	manaPool = new mana(1100,510);
+  pause = true;
 
-	testCamp = new camp(0,0,0);
+  imageMode(CENTER);
+  manaPool = new mana(1100, 510);
 
-	oneTower = new tower(width/2,height/2);
+  testCamp = new camp(0, 0, 0);
 
-	background = loadImage("data/map.png");
-	background.resize(width,height);
+  oneTower = new tower(width/2, height/2);
 
-	tui = new trapui();
+  background = loadImage("data/map.png");
+  background.resize(width, height);
+
+  tui = new trapui();
 }
 
-void draw(){
-	if(!pause){
-		imageMode(CENTER);
-		image(background,width/2,height/2);
-		tui.run();
+void draw() {
+  if (!gameover()) {
+    if (!pause) {
+      imageMode(CENTER);
+      image(background, width/2, height/2);
+      tui.run();
 
-		testCamp.run();
+      testCamp.run();
 
-		oneTower.run();
+      oneTower.run();
 
-		manaPool.run();
+      manaPool.run();
 
-		runCollision();
+      runCollision();
+      gametimer++;
+    } else {
+      fill(82, 10);
+      rect(0, 0, width, height);
+      textSize(100);
+      textAlign(CENTER, CENTER);
+      fill(255);
+      text("ONLY ONE TOWER", width/2, height/3);
+      textSize(30);
+      text("(defence)", width/2, height/3 + 80);
+      text("Press space to start, pause & unpause", width/2, height/2);
+      text("Left click and drag your tower to defend", width/2, height/2 + 40);
+      text("Right click and select to change your tower", width/2, height/2+80);
+      text("Click and drag traps to place them", width/2, height/2 + 120);
+      text("You gain 1 mana every second", width/2, height/2 + 160);
+      text("Code by DogeMastr, Art by Infinnitor", width/2, height- height/5 + 40);
+      text("Made in 48~ hours for the GMTK-only-one gamejam", width/2, height- height/5 + 80);
+    }
+  } else {
+    fill(82, 10);
+    rect(0, 0, width, height);
+    textSize(100);
+    textAlign(CENTER, CENTER);
+    fill(255);
+    textSize(100);
+    text("YOU LOST", width/2, height/3);
+    textSize(30);
+    text("Hope you had fun playing!", width/2, height/2);
+    text("You killed " + kills + " monsters!", width/2, height/2 + 40);
+    text("You lasted " + gametimer + " frames!", width/2, height/2 + 80);
+    text("press space to play again!", width/2, height/2 + 120);
 
-	} else {
-		fill(82,10);
-		rect(0,0,width,height);
-		textSize(100);
-		textAlign(CENTER,CENTER);
-		fill(255);
-		text("PAUSED",width/2,height/2);
-	}
+    if (keyPressed) {
+      if (key == ' ') {
+        reset();
+      }
+    }
+  }
 }
 
-void runCollision(){
-	for(int i = testCamp.enemyList.size() - 1; i > 0; i--){
-		if(testCamp.enemyList.get(i).collision(manaPool)){
-			manaPool.amount -= testCamp.enemyList.get(i).damage;
-			testCamp.enemyList.remove(i);
-			damage.play();
-		}
-	}
+void reset() {
+
+  kills = 0;
+  gametimer = 0;
+
+  imageMode(CENTER);
+  manaPool = new mana(1100, 510);
+
+  testCamp = new camp(0, 0, 0);
+
+  oneTower = new tower(width/2, height/2);
+
+  tui = new trapui();
 }
 
-boolean gameover(){
-	if(manaPool.amount < 0){
-		return true;
-	} else {
-		return false;
-	}
+void runCollision() {
+  for (int i = testCamp.enemyList.size() - 1; i > 0; i--) {
+    if (testCamp.enemyList.get(i).collision(manaPool)) {
+      manaPool.amount -= testCamp.enemyList.get(i).damage;
+      testCamp.enemyList.remove(i);
+      damage.play();
+    }
+  }
 }
 
-void keyReleased(){
-	if(key == ' '){
-		if(pause){
-			pause = false;
-		} else {
-			pause = true;
-		}
-	}
+boolean gameover() {
+  if (manaPool.amount < 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void keyReleased() {
+  if (key == ' ') {
+    if (pause) {
+      pause = false;
+    } else {
+      pause = true;
+    }
+  }
 }
